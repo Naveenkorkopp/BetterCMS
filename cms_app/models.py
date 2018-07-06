@@ -20,14 +20,22 @@ class ComponentJson(models.Model):
 
 	date = models.DateTimeField(
 		default=datetime.now(),
-		blank=True
+		blank=True,
+		null=True
 	)
 
 	name = models.CharField(
 		max_length=100,
+		blank=True,
+		null=True,
 	)
 
 	json_data = JSONField()
+
+	site_thumb = models.TextField(
+		blank=True,
+		null=True
+	)
 
 	def __str__(self):
 		return self.name
@@ -35,13 +43,20 @@ class ComponentJson(models.Model):
 class ThumbnailData(models.Model):
 	thumbnail_name = models.CharField(
 		max_length=200,
+		blank=True,
+		null=True
 	)
 
 	thumbnail_title = models.CharField(
 		max_length=200,
+		blank=True,
+		null=True
 	)
 
-	thumbnail_content = models.TextField()
+	thumbnail_content = models.TextField(
+		blank=True,
+		null=True
+	)
 
 	def __str__(self):
 		return self.thumbnail_name
