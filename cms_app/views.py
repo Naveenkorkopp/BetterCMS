@@ -35,11 +35,11 @@ def save_theme(request):
 
 		json_data = json.dumps(data)
 
-		f = open(base_dir + '/cms_pp/cms_files/data.js', 'w+')
+		f = open(base_dir + '/cms_app/cms_files/data.js', 'w+')
 		f.write("window.tree = " + json_data)
 		f.close()
 
-		f1 = open(base_dir + '/cms_pp/cms_files/site_thumb.js', 'w+')
+		f1 = open(base_dir + '/cms_app/cms_files/site_thumb.js', 'w+')
 		f1.write("window.site_thumb = " + data.get('site_thumb'))
 		f1.close()
 
