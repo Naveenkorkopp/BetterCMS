@@ -19,7 +19,6 @@ def room(request):
 # To save the component object in database as well as create a static file
 @csrf_exempt
 def save_theme(request):
-	# import ipdb;ipdb.set_trace()
 	try:
 		# Save the component in the database
 		data = json.loads(request.body)
@@ -30,10 +29,15 @@ def save_theme(request):
 		component_obj.site_thumb = data.get('site_thumb')
 		component_obj.save()
 
+		newData = {
+			'name' : data.get('name'),
+			'json_data' : data.get('json_data')
+		}
+
 		# Create the window.tree object in static file
 		base_dir = settings.STATIC_ROOT
 
-		json_data = json.dumps(data)
+		json_data = json.dumps(newData)
 
 		f = open(base_dir + '/cms_app/cms_files/data.js', 'w+')
 		f.write("window.tree = " + json_data)
@@ -54,19 +58,37 @@ def save_theme(request):
 
 	return JsonResponse({'status': True})
 
+@csrf_exempt
+def get_theme(request):
+	try:
+		# import ipdb;ipdb.set_trace()
+		# Create the window.tree object in static file
+		base_dir = settings.STATIC_ROOT
+
+		with open(base_dir + '/cms_app/cms_files/data.js') as f:
+			content = f.readlines()
+
+		f.close()
+
+	except Exception as e:
+		return HttpResponse({'data': False})
+	finally:
+		if f is not None:
+			f.close()
+
+	return HttpResponse(content)
+
 
 # To save the thumbnail object getting from the front end
 @csrf_exempt
 def save_thumbnail(request):
-	# import ipdb;ipdb.set_trace()
 	try:
-
-		data = json.loads(request.body)
-
+		# import ipdb;ipdb.set_trace()
+		
 		thumbnail_obj = ThumbnailData()
-		thumbnail_obj.thumbnail_name = data.get('name')
-		thumbnail_obj.thumbnail_title = data.get('title')
-		thumbnail_obj.thumbnail_content = data.get('content')
+		thumbnail_obj.thumbnail_name = request.POST['name']
+		thumbnail_obj.thumbnail_title = request.POST['title']
+		thumbnail_obj.thumbnail_content = request.POST['content']
 		thumbnail_obj.save()
 
 	except Exception as e:
@@ -74,19 +96,82 @@ def save_thumbnail(request):
 
 	return JsonResponse({'status': True})
 
-
-# To get the component based on slug name from database
-def get_theme(request, slug):
-	# import ipdb;ipdb.set_trace()
-
+@csrf_exempt
+def get_thumbnail(request):
 	try:
-		component_obj = ComponentJson.objects.get(name=slug)
-		serialized_data = serializers.serialize('json', [component_obj,])
-		struct = json.loads(serialized_data)
-		# data = json.dumps(struct[0])
+		thumbnail_obj = ThumbnailData.objects.all()
+		data = list(ThumbnailData.objects.values())
 	except Exception as e:
 		return JsonResponse({'status': False})
 
-	return JsonResponse(struct,safe=False)
+	return JsonResponse(data, safe=False)
+
+
+@csrf_exempt
+def get_dummyData(request):
+	try:
+		base_dir = settings.STATIC_ROOT
+
+		with open(base_dir + '/cms_app/cms_files/dummy.js') as f:
+			content = f.readlines()
+		json = eval(content[0])
+		f.close()
+	except Exception as e:
+		return JsonResponse({'status': False})
+	finally:
+		if f is not None:
+			f.close()	
+
+
+	return JsonResponse(json,safe=False)
+
+
+@csrf_exempt
+def get_dummyData2(request):
+	try:
+		base_dir = settings.STATIC_ROOT
+
+		with open(base_dir + '/cms_app/cms_files/dummy2.js') as f:
+			content = f.readlines()
+		json = eval(content[0])
+		f.close()
+	except Exception as e:
+		return JsonResponse({'status': False})
+	finally:
+		if f is not None:
+			f.close()	
+
+
+	return JsonResponse(json,safe=False)
+
+@csrf_exempt
+def get_dummyData3(request):
+	try:
+		base_dir = settings.STATIC_ROOT
+
+		with open(base_dir + '/cms_app/cms_files/dummy3.js') as f:
+			content = f.readlines()
+		json = eval(content[0])
+		f.close()
+	except Exception as e:
+		return JsonResponse({'status': False})
+	finally:
+		if f is not None:
+			f.close()
+
+	return JsonResponse(json,safe=False)
+
+# To get the component based on slug name from database
+# def get_theme(request, slug):
+
+# 	try:
+# 		component_obj = ComponentJson.objects.get(name=slug)
+# 		serialized_data = serializers.serialize('json', [component_obj,])
+# 		struct = json.loads(serialized_data)
+# 		# data = json.dumps(struct[0])
+# 	except Exception as e:
+# 		return JsonResponse({'status': False})
+# 	lines = [line.rstrip('\n') for line in struct]
+# 	return JsonResponse(struct,safe=False)
 
 
